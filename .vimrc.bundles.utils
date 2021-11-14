@@ -1,0 +1,11 @@
+Plugin 'scrooloose/nerdtree' " The real tree
+Plugin 'majutsushi/tagbar' " :TagbarToggle
+Plugin 'tpope/vim-commentary' " shortcuts for commenting
+Plugin 'tpope/vim-fugitive' " Git for Vim
+Plugin 'christoomey/vim-tmux-navigator' " ctrl + h/j/k/l for navigating in tmux
+Plugin 'tpope/vim-surround' " Change surroundings ({[< etc.
+Plugin 'tpope/vim-unimpaired' " Move between mappings using [ ]
+Plugin 'janko-m/vim-test' " Run tests with different granularities
+Plugin 'AndrewRadev/splitjoin.vim' " Switching between a single-line statement and a multi-line one
+Plugin 'mg979/vim-visual-multi' " Select with vitamines
+Plugin 'junegunn/fzf.vim' " Awesome zfz fuzzy search

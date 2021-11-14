@@ -1,0 +1,148 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" NerdTree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" leader + f :NERDTreeFind<CR>
+" leader + t :NERDTreeToggle<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+nnoremap <leader>t :NERDTreeToggle<CR>
+" This allows to switch tmux windows vertically from NerdTree
+" Bug documented here: https://github.com/christoomey/vim-tmux-navigator/issues/83
+let g:NERDTreeMapJumpNextSibling = '<Nop>'
+let g:NERDTreeMapJumpPrevSibling = '<Nop>'
+" Let NerdTree show hidden files
+let NERDTreeShowHidden=1
+" don't show .git
+let NERDTreeIgnore=['\.git$']
+" Config win size
+let g:NERDTreeAutoDeleteBuffer=1
+let g:NERDTreeMinimalUI = 1
+" add keepopen to default options so stays open when opening a file
+let NERDTreeCustomOpenArgs = {'file': {'reuse': 'all', 'where': 'p', 'keepopen': 1 }, 'dir': {}}
+" open NerdTree on StartUp
+function! StartUp()
+  if 0 == argc()
+    NERDTree
+  end
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Rg
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" leader + a :Rg<space>
+nnoremap <leader>a :Rg<space>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Tag
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" leader + ] :TagbarToggle<CR>
+nnoremap <leader>] :TagbarToggle<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-Fugitive
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:fugitive_gitlab_domains = ['https://gitlab.otters.xyz', 'https://gitlab.com']
+nnoremap <silent> <leader>- :Git<cr>
+nnoremap <leader>gp :Gpull<cr>
+nnoremap <silent> <leader>gb :Git blame<cr>
+nnoremap <silent> <leader>gd :Gvdiff<cr>
+nnoremap <silent> <leader>go :Gbrowse<cr>
+xnoremap <silent> <leader>go :Gbrowse<cr>
+nnoremap <silent> <leader>gl :Gclog<cr>
+" }}} fugitive
+
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" GITLAB CLI: https://github.com/lighttiger2505/lab
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+command! -nargs=0 Gmr :call system('lab mr -b')
+nnoremap <silent> <leader>gmr :Gmr<cr>
+
+" Run commands in ex mode and put result in quickfix
+command -nargs=+ Run :cexpr system('<args>') | copen
+"
+" Open def in vertical/horizontal split
+" nnoremap <leader>v <C-w>v
+"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim-go 
+" run :GoBuild or :GoTestCompile based on the go file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+" ----------------------------------------------------------------------------
+" :Root | Change directory to the root of the Git repository
+" from https://github.com/junegunn/dotfiles/blob/master/vimrc#L657
+"  ----------------------------------------------------------------------------
+function! s:root()
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  if v:shell_error
+    echo 'Not in git repo'
+  else
+    execute 'lcd' root
+    echo 'Changed directory to: '.root
+  endif
+endfunction
+command! Root call s:root()
+
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" FZF
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" exclude .gitignore files plus .git folder and add hidden files
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+
+" enable history, so we can use ctrl-p and ctrl-n to see them
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+" mappings
+nmap <C-g> :GoDecls<cr>
+nnoremap <silent> <C-p> :FZF -m<CR>
+nnoremap <silent> <Leader><space> :Buffers<CR>
+nnoremap <silent> <Leader>h :History<CR>
+nnoremap <silent> <Leader>L :Lines<CR>
+inoremap <c-l> <c-\><c-o>:Snippets<CR>
+nnoremap <silent> <Leader>` :Marks<CR>
+
+" Allow to pass commands to RG
+" Search by default hidden files except .git folder
+command! -bang -nargs=* Rg
+      \ call fzf#vim#grep(
+      \ "rg --column --line-number --no-heading --color=always --hidden --smart-case " .
+      \ shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
+
+" Use fzf Snippets to search through description not only name
+command! -bar -bang Snippets call fzf#vim#snippets({'options': '--tiebreak=begin -n ..'}, <bang>0)
+
+" ~/.viminfo needs to be writable and readable. Set oldfiles to 1000 last
+" recently opened files, :FzfHistory uses it
+set viminfo='1000
+
+" Time out on key codes but not mappings.
+" Basically this makes terminal Vim work sanely.
+if !has('gui_running')
+  set notimeout
+  set ttimeout
+  set ttimeoutlen=10
+  augroup FastEscape
+    autocmd!
+    au InsertEnter * set timeoutlen=0
+    au InsertLeave * set timeoutlen=1000
+  augroup END
+endif
+
+" " Empty value to disable preview window altogether
+" let g:fzf_preview_window = ''
+
+" " seach word under cursor
+nnoremap <silent> <leader>sw :Rg <C-R><C-W><CR>
+xnoremap <silent> <leader>sw y:Rg <C-R>"<CR>
+" visual mode search text
+xnoremap <silent> <leader>a y:Rg <C-R>"<CR>
+
+nnoremap <silent> <leader>c :call ToggleQuickFix()<cr>

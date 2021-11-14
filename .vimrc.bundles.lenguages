@@ -1,0 +1,8 @@
+" Golang
+Plugin 'fatih/vim-go' " Golang functionalities
+
+" Javascript
+Plugin 'pangloss/vim-javascript' " Syntax highlighting and indentation for JS
+
+" Solidity
+Plugin 'tomlion/vim-solidity' " Syntax highlighting for Solidity

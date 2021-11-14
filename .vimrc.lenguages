@@ -1,0 +1,97 @@
+" Golang
+augroup go
+autocmd!
+au FileType go nmap <silent> <leader>run <Plug>(go-run)
+au FileType go nmap <silent> <leader>r <Plug>(go-referrers)
+au FileType go nmap <silent> <leader>b :<C-u>call <SID>build_go_files()<CR>
+" Alternate between test and implementation file
+au FileType go nmap <silent> <leader>ta :A<CR>
+au FileType go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+au FileType go nmap <silent> <leader>v <Plug>(go-def-vertical)
+au FileType go nmap <silent> <leader>de <Plug>(go-def)
+au FileType go nmap <silent> <leader>ds <Plug>(go-def-stack)
+au FileType go nmap <silent> <leader>i <Plug>(go-info)
+au FileType go nmap <silent> <leader>im <Plug>(go-implements)
+au FileType go nmap <silent> <leader>si <Plug>(go-sameids-toggle)
+au FileType go nmap <silent> <leader>ca <Plug>(go-callers)
+au FileType go nmap <silent> <leader>re <Plug>(go-rename)
+augroup END
+" Mappings for vim-go-test
+autocmd BufEnter *.go nmap <leader>tf <Plug>(go-test)
+autocmd BufEnter *.go nmap <leader>tn <Plug>(go-test-func)
+autocmd BufEnter *.go nmap <leader>tc <Plug>(go-coverage-toggle)
+
+let g:go_test_timeout = '3600s'
+" Disable <C-]> mapping, I use nvim LSP
+let g:go_def_mapping_enabled = 0
+let g:go_def_mode='gopls'
+let g:go_def_mod_mode='godef'
+
+" create a go doc comment based on the word under the cursor
+function! s:create_go_doc_comment()
+  norm "zyiw
+  execute ":put! z"
+  execute ":norm I// \<Esc>$"
+endfunction
+nnoremap <leader>ui :<C-u>call <SID>create_go_doc_comment()<CR>
+
+" Indent-guides disable mappings
+let g:indent_guides_default_mapping = 0
+
+let g:go_fmt_fail_silently = 1
+let g:go_metalinter_autosave = 1 " Go lint, vet and errcheck at autosave
+let g:go_metalinter_deadline = "5s"
+let g:go_debug_windows = {
+      \ 'vars':  'leftabove 35vnew',
+      \ 'stack': 'botright 10new',
+\ }
+
+let g:go_fmt_autosave = 0 " Format etc once file is written
+let g:go_updatetime=500
+let g:go_fmt_command = "goimports" " Fix import when file is saved
+let g:go_imports_autosave = 1 
+let g:go_test_prepend_name = 1
+
+let g:go_list_type = "quickfix"
+let g:go_term_close_on_exit = 1
+let g:go_auto_type_info = 0
+let g:go_auto_sameids = 0
+
+let g:go_null_module_warning = 0
+let g:go_echo_command_info = 1
+
+let g:go_autodetect_gopath = 0
+let g:go_gopls_enabled = 1
+
+let g:go_info_mode = 'gopls'
+let g:go_rename_command='gopls'
+let g:go_gopls_complete_unimported = 1
+let g:go_implements_mode='gopls'
+let g:go_diagnostics_enabled = 1
+let g:go_doc_popup_window = 1
+let g:go_diagnostics_level = 0
+
+let g:go_highlight_space_tab_error = 0
+let g:go_highlight_array_whitespace_error = 0
+let g:go_highlight_trailing_whitespace_error = 0
+let g:go_highlight_extra_types = 0
+let g:go_highlight_build_constraints = 0
+let g:go_highlight_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_fields = 0
+let g:go_highlight_function_calls = 1
+let g:go_highlight_function_parameters = 0
+let g:go_gocode_propose_source = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+
+let g:go_modifytags_transform = 'camelcase'
+let g:go_fold_enable = []
+
+let g:go_test_show_name = 1
+
+let g:go_metalinter_autosave = 0
+let g:go_metalinter_autosave_enabled = ['govet', 'golint']
+let g:go_metalinter_command = "golangci-lint run --disable-all -e composites -E goimports -E golint -E govet -E ineffassign -E rowserrcheck -E stylecheck"
